@@ -33,4 +33,145 @@ public class Config
 	private String		proxyaddress;
 	@JsonProperty("whitelist")
 	private Whitelist	whitelist;
+
+	public Boolean getPortalservices()
+	{
+		return portalservices;
+	}
+
+	public void setPortalservices(Boolean portalservices)
+	{
+		this.portalservices = portalservices;
+	}
+
+	public String getGateway()
+	{
+		return gateway;
+	}
+
+	public void setGateway(String gateway)
+	{
+		this.gateway = gateway;
+	}
+
+	public String getMac()
+	{
+		return mac;
+	}
+
+	public void setMac(String mac)
+	{
+		this.mac = mac;
+	}
+
+	public Integer getSwversion()
+	{
+		return swversion;
+	}
+
+	public void setSwversion(Integer swversion)
+	{
+		this.swversion = swversion;
+	}
+
+	public Boolean getLinkbutton()
+	{
+		return linkbutton;
+	}
+
+	public void setLinkbutton(Boolean linkbutton)
+	{
+		this.linkbutton = linkbutton;
+	}
+
+	public String getIpaddress()
+	{
+		return ipaddress;
+	}
+
+	public void setIpaddress(String ipaddress)
+	{
+		this.ipaddress = ipaddress;
+	}
+
+	public Integer getProxyport()
+	{
+		return proxyport;
+	}
+
+	public void setProxyport(Integer proxyport)
+	{
+		this.proxyport = proxyport;
+	}
+
+	public Swupdate getSwupdate()
+	{
+		return swupdate;
+	}
+
+	public void setSwupdate(Swupdate swupdate)
+	{
+		this.swupdate = swupdate;
+	}
+
+	public String getNetmask()
+	{
+		return netmask;
+	}
+
+	public void setNetmask(String netmask)
+	{
+		this.netmask = netmask;
+	}
+
+	public String getName()
+	{
+		return name;
+	}
+
+	public void setName(String name)
+	{
+		this.name = name;
+	}
+
+	public Boolean getDhcp()
+	{
+		return dhcp;
+	}
+
+	public void setDhcp(Boolean dhcp)
+	{
+		this.dhcp = dhcp;
+	}
+
+	public String getUTC()
+	{
+		return UTC;
+	}
+
+	public void setUTC(String uTC)
+	{
+		UTC = uTC;
+	}
+
+	public String getProxyaddress()
+	{
+		return proxyaddress;
+	}
+
+	public void setProxyaddress(String proxyaddress)
+	{
+		this.proxyaddress = proxyaddress;
+	}
+
+	public Whitelist getWhitelist()
+	{
+		return whitelist;
+	}
+
+	public void setWhitelist(Whitelist whitelist)
+	{
+		this.whitelist = whitelist;
+	}
+
 }

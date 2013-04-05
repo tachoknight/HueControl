@@ -1,8 +1,12 @@
 package tachoknight.wantstobe.anearlyriser.model;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.codehaus.jackson.map.annotate.JsonFilter;
+
 import java.util.*;
 
+@JsonFilter("stateFilter")
 public class State
 {
 	@JsonProperty("bri")
@@ -56,6 +60,7 @@ public class State
 		this.sat = sat;
 	}
 
+	@JsonIgnore
 	public Boolean getReachable()
 	{
 		return reachable;

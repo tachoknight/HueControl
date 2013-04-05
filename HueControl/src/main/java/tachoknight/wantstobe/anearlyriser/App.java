@@ -51,9 +51,12 @@ public class App
 			LightsEntry light1 = lights.get("1");
 			System.out.println(light1.getName() + " - " + light1.getState().getBri());
 
-			State light1State = light1.getState();
+			//State light1State = light1.getState();
+			State light1State = new State();
 			light1State.setOn(true);
-			light1State.setBri(23);
+			light1State.setBri(87);
+			light1State.setHue(15);
+			light1State.setSat(200);
 
 			HttpPut statePut = new HttpPut("http://" + "10.0.1.28"
 											+ "/api/"
@@ -62,7 +65,7 @@ public class App
 			ObjectMapper lightMapper = new ObjectMapper();
 
 			FilterProvider filters = new SimpleFilterProvider().addFilter(	"stateFilter",
-																			SimpleBeanPropertyFilter.filterOutAllExcept("on","bri","sat"));
+																			SimpleBeanPropertyFilter.serializeAllExcept("colormode","reachable"));
 
 			String light1JSON = lightMapper.writer(filters).writeValueAsString(light1State);
 			

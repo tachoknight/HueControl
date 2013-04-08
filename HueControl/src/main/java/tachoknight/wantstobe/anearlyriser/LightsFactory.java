@@ -9,6 +9,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 
@@ -28,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tachoknight.wantstobe.anearlyriser.model.LightsEntry;
+import tachoknight.wantstobe.anearlyriser.model.SchedulesEntry;
 import tachoknight.wantstobe.anearlyriser.model.State;
 import tachoknight.wantstobe.anearlyriser.model.SystemConfiguration;
 
@@ -84,45 +86,42 @@ public class LightsFactory
 		return false;
 	}
 
-	public boolean setLightState(Integer numOfLight, State state)
+	private boolean post(String url, String jsonToPut)
 	{
-		String lightURL = getBaseUrl() + "/lights/" + numOfLight + "/state";
+		logger.debug("URL: " + url + "\nJSON:" + jsonToPut);
+
+		HttpClient client = new DefaultHttpClient();
+		HttpPost postObject = new HttpPost(url);
 
 		try
 		{
-			ObjectMapper stateMapper = new ObjectMapper();
+			StringEntity entity = new StringEntity(jsonToPut);
+			entity.setContentType("application/json;charset=UTF-8");
+			entity.setContentEncoding(new BasicHeader(	HTTP.CONTENT_TYPE,
+														"application/json;charset=UTF-8"));
+			postObject.setEntity(entity);
 
-			/*
-			 * Certain properties are read-only and must be excluded from the
-			 * json we send to the server
-			 */
-			FilterProvider filters = new SimpleFilterProvider().addFilter(	"stateFilter",
-																			SimpleBeanPropertyFilter.serializeAllExcept("colormode",
-																														"reachable"));
-			String stateJSON = stateMapper.writer(filters)
-											.writeValueAsString(state);
+			HttpResponse response = client.execute(postObject);
 
-			return put(lightURL, stateJSON);
-		}
-		catch (JsonGenerationException e)
-		{
-			logger.error(	"Got a JsonGenerationException: " + e.getLocalizedMessage(),
-							e);
-		}
-		catch (JsonMappingException e)
-		{
-			logger.error(	"Got a JsonMappingException: " + e.getLocalizedMessage(),
-							e);
+			logger.debug("Response in put got: " + response.getStatusLine());
+
+			return true;
 		}
 		catch (IOException e)
 		{
-			logger.error("Got an IOException: " + e.getLocalizedMessage(), e);
+			logger.error("Hmm, got an error: " + e.getLocalizedMessage(), e);
+		}
+		finally
+		{
+			postObject.releaseConnection();
+			client.getConnectionManager().closeExpiredConnections();
 		}
 
+		logger.warn("Returning false to caller!");
 		return false;
 	}
 
-	private BufferedReader get(String url)
+	private String get(String url)
 	{
 		HttpClient client = new DefaultHttpClient();
 		HttpGet request = new HttpGet(url);
@@ -133,7 +132,15 @@ public class LightsFactory
 			BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity()
 																					.getContent()));
 
-			return rd;
+			StringBuilder responseJSON = new StringBuilder();
+
+			String line = null;
+			while ((line = rd.readLine()) != null)
+			{
+				responseJSON.append(line);
+			}
+
+			return responseJSON.toString();
 		}
 		catch (IOException e)
 		{
@@ -149,6 +156,41 @@ public class LightsFactory
 		return null;
 	}
 
+	public boolean setLightState(Integer numOfLight, State state)
+	{
+		String lightURL = getBaseUrl() + "/lights/" + numOfLight + "/state";
+
+		try
+		{
+			ObjectMapper stateMapper = new ObjectMapper();
+
+			/*
+			 * Certain properties are read-only and must be excluded from the
+			 * json we send to the server
+			 */
+			FilterProvider filters = new SimpleFilterProvider().addFilter(	"stateFilter",
+																			SimpleBeanPropertyFilter.serializeAllExcept("colormode",
+																														"reachable"));
+			String stateJSON = stateMapper.writer(filters).writeValueAsString(state);
+
+			return put(lightURL, stateJSON);
+		}
+		catch (JsonGenerationException e)
+		{
+			logger.error("Got a JsonGenerationException: " + e.getLocalizedMessage(), e);
+		}
+		catch (JsonMappingException e)
+		{
+			logger.error("Got a JsonMappingException: " + e.getLocalizedMessage(), e);
+		}
+		catch (IOException e)
+		{
+			logger.error("Got an IOException: " + e.getLocalizedMessage(), e);
+		}
+
+		return false;
+	}
+
 	/**
 	 * Gets a full dump of the Hue configuration, including all lights,
 	 * authorized devices, etc.
@@ -159,7 +201,7 @@ public class LightsFactory
 	{
 		try
 		{
-			BufferedReader rd = get(getBaseUrl());
+			String rd = get(getBaseUrl());
 
 			if (rd != null)
 			{
@@ -170,13 +212,11 @@ public class LightsFactory
 		}
 		catch (JsonParseException e)
 		{
-			logger.error(	"Got a JsonParserException: " + e.getLocalizedMessage(),
-							e);
+			logger.error("Got a JsonParserException: " + e.getLocalizedMessage(), e);
 		}
 		catch (JsonMappingException e)
 		{
-			logger.error(	"Got a JsonMappingException: " + e.getLocalizedMessage(),
-							e);
+			logger.error("Got a JsonMappingException: " + e.getLocalizedMessage(), e);
 		}
 		catch (IOException e)
 		{
@@ -209,5 +249,38 @@ public class LightsFactory
 	public LightsEntry getLight(Integer numOfLight)
 	{
 		return getAllLights().get(numOfLight);
+	}
+
+	public Map<String, SchedulesEntry> getSchedules()
+	{
+		return getSystemConfiguration().getSchedules();
+	}
+
+	public boolean setSchedule(SchedulesEntry se)
+	{
+		String scheduleURL = getBaseUrl() + "/schedules";
+		try
+		{
+			ObjectMapper stateMapper = new ObjectMapper();
+
+			String stateJSON = stateMapper.writeValueAsString(se);
+
+			return post(scheduleURL, stateJSON);
+		}
+		catch (JsonGenerationException e)
+		{
+			logger.error("Got a JsonGenerationException: " + e.getLocalizedMessage(), e);
+		}
+		catch (JsonMappingException e)
+		{
+			logger.error("Got a JsonMappingException: " + e.getLocalizedMessage(), e);
+		}
+		catch (IOException e)
+		{
+			logger.error("Got an IOException: " + e.getLocalizedMessage(), e);
+		}
+
+		logger.warn("Returning false to caller");
+		return false;
 	}
 }

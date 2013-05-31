@@ -26,6 +26,8 @@ public class App
 
 	public static void main(String[] args)
 	{
+		logger.info("And here we go....");
+		
 		/*
 		 * First we set up our lights factory
 		 */
@@ -53,6 +55,7 @@ public class App
 		light1State.setHue(150);
 		light1State.setSat(200);
 
+		/* Note, the lights are 1-based, not 0. */
 		if (lf.setLightState(1, light1State) == false)
 		{
 			logger.error("Hmm...didn't set the light");
@@ -131,14 +134,14 @@ public class App
 		command.setMethod("PUT");
 		Body body = new Body();
 		body.setOn(true);
-		body.setBri(124);
+		body.setBri(255);
 		/* According to the documentation, 10 = 1 second, so let's set it to go over a minute */
-		body.setTransitiontime(10 * 60);
+		body.setTransitiontime(10 * 60 * 5);
 		
 		/* And set the color in CIE */
 		List<Double> cieXY = new ArrayList<Double>();
-		cieXY.add(.470);
-		cieXY.add(.450);
+		cieXY.add(.651);
+		cieXY.add(.390);
 		body.setXy(cieXY);
 		
 		

@@ -123,6 +123,8 @@ public class LightsFactory
 
 	private String get(String url)
 	{
+		logger.debug("Will use " + url + " for requests to the Hue");
+		
 		HttpClient client = new DefaultHttpClient();
 		HttpGet request = new HttpGet(url);
 
@@ -248,7 +250,7 @@ public class LightsFactory
 	 */
 	public LightsEntry getLight(Integer numOfLight)
 	{
-		return getAllLights().get(numOfLight);
+		return getAllLights().get(String.valueOf(numOfLight));
 	}
 
 	public Map<String, SchedulesEntry> getSchedules()

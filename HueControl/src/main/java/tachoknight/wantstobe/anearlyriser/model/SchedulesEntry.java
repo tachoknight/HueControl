@@ -13,6 +13,19 @@ public class SchedulesEntry
 	private String	name;
 	@JsonProperty("command")
 	private Command	command;
+	@JsonProperty("created")
+	private String created;
+
+	
+	public String getCreated()
+	{
+		return created;
+	}
+
+	public void setCreated(String created)
+	{
+		this.created = created;
+	}
 
 	public String getTime()
 	{

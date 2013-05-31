@@ -13,6 +13,19 @@ public class SystemConfiguration
 	private Config						config;
 	@JsonProperty("groups")
 	private Map<String, Object>			groups;
+	@JsonProperty("scenes")
+	private Map<String, ScenesEntry>	scenes;
+	
+	
+	public Map<String, ScenesEntry> getScenes()
+	{
+		return scenes;
+	}
+
+	public void setScenes(Map<String, ScenesEntry> scenes)
+	{
+		this.scenes = scenes;
+	}
 
 	public Map<String, LightsEntry> getLights()
 	{

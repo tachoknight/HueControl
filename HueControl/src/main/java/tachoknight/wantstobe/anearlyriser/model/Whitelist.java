@@ -1,11 +1,9 @@
 package tachoknight.wantstobe.anearlyriser.model;
 
 import org.codehaus.jackson.annotate.JsonAnySetter;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 import java.util.*;
 
-//@JsonIgnoreProperties(ignoreUnknown = true)
 public class Whitelist
 {
 	@JsonProperty("whitelist")
@@ -23,7 +21,7 @@ public class Whitelist
 
 	/*
 	 * The JSON we get back here uses a dynamic key to a value object, which at
-	 * least Jackson doesn't like (or I didn't find a good way to handle thi
+	 * least Jackson doesn't like (or I didn't find a good way to handle this
 	 * automagically, so we do it manually here)
 	 */
 	@JsonAnySetter
